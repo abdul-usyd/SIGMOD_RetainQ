@@ -1,0 +1,14 @@
+{
+  "study_version": "retainq-information-final-1.0",
+  "seed": 20261018,
+  "candidate_user_prefix": 2000,
+  "candidates_per_label_cap": 256,
+  "horizons": [100, 1000, 10000, 162541],
+  "scalability_capacities": [4, 8, 10, 25, 50, 100, 250, 500, 1000, 2000],
+  "dense_capacity_cap": 250,
+  "explicit_matrix_cell_cap": 40000,
+  "timing_repetitions": 5,
+  "source_history_design": "nine pair-minus-anchor year directions; four distinct users per direction and no shared edited user across directions; exact matching on observed ranking positions",
+  "outcome_selection": "deterministic source-order candidate generation, deterministic bipartite matching; no search for a favourable disclosure or performance result",
+  "failure_policy": "fail visibly if any source, algebra, matching, or independent oracle check fails"
+}

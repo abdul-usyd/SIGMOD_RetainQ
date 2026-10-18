@@ -1,0 +1,11 @@
+Anonymous RetainQ artifact.
+
+RetainQ_Final_Study.ipynb: executed focused study, with 124 words of Markdown.
+study.py / retainq_study/: complete focused CPU study and fixed configuration.
+verify.py: offline integrity and exact-witness validation.
+results/: final tables, source pointers, mathematical certificates and PNG/PDF figures.
+theory.tex / theory.pdf: precise proofs, source-domain identifiability corollary and limits.
+original_system/: unchanged original compiler/runtime/verifier, a convenience driver and complete prior confirmatory evidence.
+
+Reproduce the focused study with the commands in README.md. It fetches the official MovieLens 25M archive and validates fixed source hashes. Raw catalogue/rating files are not redistributed.
+The release model is one sealed cumulative horizon. Actual privacy and a new end-to-end strong-baseline performance win are not claimed.

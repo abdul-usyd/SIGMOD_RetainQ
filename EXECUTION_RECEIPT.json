@@ -1,0 +1,11 @@
+{
+  "anonymous_identity_scan_passed": true,
+  "all_10_notebook_code_cells_passed": true,
+  "scientific_checks_passed": 17,
+  "original_producer_and_verifier_byte_identical": true,
+  "original_evidence_files_reverified": 310,
+  "embedded_focused_code_sha256": "c8f0417c5fd666f8f366e2119443e4eb465c66ff2a2e98599a67f791ca6cb143",
+  "raw_MovieLens_files_redistributed": false,
+  "execution_paths_removed_from_notebook_outputs": true,
+  "validation_scope": "local execution, deterministic certificates and integrity checks; not cryptographic capture attestation"
+}

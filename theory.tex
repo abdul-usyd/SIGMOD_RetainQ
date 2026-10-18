@@ -1,0 +1,203 @@
+\documentclass[10pt]{article}
+\usepackage[margin=0.85in]{geometry}
+\usepackage{amsmath,amssymb,amsthm,hyperref}
+\newtheorem{proposition}{Proposition}
+\newtheorem{lemma}{Lemma}
+\newtheorem{corollary}{Corollary}
+\newcommand{\row}{\operatorname{row}}
+\newcommand{\rank}{\operatorname{rank}}
+\title{Information-retention certificates for quota audits}
+\author{Anonymous}
+\date{}
+\begin{document}
+\maketitle
+\noindent These notes state the exact scope of the supplementary study. General
+row-space query support and query auditing are established principles; the notes
+apply the existing quota/transfer-graph characterization and verify its consequences.
+All dimensions below concern a single scalar metric and universal exact linear
+representations on the declared atom space, unless a feasible source domain is
+explicitly stated. They are not minimum-bit or privacy theorems.
+
+\paragraph{Model.}
+For $G\geq1$ and $K\geq1$, let
+$Q=\{q\in\mathbb Z^G:\ell_g\leq q_g\leq u_g,\sum_gq_g=K\}$ be nonempty,
+with $0\leq\ell_g\leq u_g\leq K$. A cumulative group/rank vector is
+$x\in\mathbb R^{GK}$ and $a_q(g,r)=\mathbf1[r\leq q_g]$.
+The rows of $A$ are $a_q$, $q\in Q$. Let $m_g=\min_Qq_g$,
+$M_g=\max_Qq_g$. Mandatory positions satisfy $r\leq m_g$; variable
+positions $V$ satisfy $m_g<r\leq M_g$; unreachable positions satisfy $r>M_g$.
+The transfer graph on $V$ contains an edge $(g,r),(h,s)$ when legal neighboring
+quotas differ by adding $(g,r)$ and removing $(h,s)$. Its components are
+$C_1,\ldots,C_c$. Fix a legal base $q_0$.
+
+\begin{lemma}[Transfer span]
+Put $D=\{z:z=0\text{ off }V,\ \sum_{v\in C_i}z_v=0\text{ for every }i\}$.
+Then $\row(A)=D+\operatorname{span}\{a_{q_0}\}$ and
+$\rank(A)=1+|V|-c$.
+\end{lemma}
+\begin{proof}
+The legal quota graph is connected: if two quotas differ, transfer one unit
+from a coordinate above its destination value to one below its destination
+value. Bounds remain satisfied and the $\ell_1$ distance decreases by two.
+Every transfer-row difference is a signed graph-edge difference. Conversely,
+each graph edge has a legal neighboring-quota witness, so its difference lies
+in $\row(A)$. Edge differences span exactly $D$, with dimension $|V|-c$.
+Connectivity of the legal quota graph now gives the claimed row-space equality.
+In every component the number $k_i=\sum_{v\in C_i}a_{q_0}(v)$ selected by a
+legal quota is invariant under transfers and is positive: otherwise a variable
+position in that component could never be selected. If mandatory positions
+exist, $a_{q_0}$ has a nonzero mandatory coefficient and is outside $D$.
+Otherwise $V$ is nonempty because $K>0$, and some component has positive
+coefficient sum in $a_{q_0}$, also putting it outside $D$. The case $V=\varnothing$
+has one nonzero quota row and rank one.
+\end{proof}
+
+\begin{proposition}[Structural target test]
+A target $t^\top x$ has a universal linear decoder from all permitted answers
+iff there is one scalar $\alpha$ such that: (i) $t$ vanishes at unreachable
+positions; (ii) every mandatory coefficient equals $\alpha$; and (iii)
+$\sum_{v\in C_i}t_v=\alpha k_i$ for every component.
+\end{proposition}
+\begin{proof}
+The conditions say exactly that $t-\alpha a_{q_0}\in D$. Apply the lemma and
+the standard row-space criterion for exact linear query support.
+\end{proof}
+\noindent If the test succeeds, any implementation supporting all exact answers
+also supports this reconstruction by composing its query interface with the
+linear decoder; this implication does not require linear internal storage.
+If it fails, there is no universal linear decoder on the ambient atom space.
+Failure alone establishes no non-disclosure claim on a constrained feasible
+domain or at a particular observed answer vector.
+
+\begin{corollary}[Relative information can remain exposed]
+A zero-sum target $t$ lies in $\row(A)$ iff it lies in $D$. In particular, the
+difference of two distinct reachable rank coordinates is recoverable iff both
+are variable positions in the same transfer component. The number of such
+recoverable pairwise contrasts is $\sum_i\binom{|C_i|}{2}$.
+\end{corollary}
+\begin{proof}
+In $t=z+\alpha a_{q_0}$, $z\in D$ has total coefficient sum zero, while
+$a_{q_0}$ has total sum $K>0$. Thus a zero-sum $t$ forces $\alpha=0$.
+Apply the component-sum description of $D$.
+\end{proof}
+\noindent Nonuniqueness of individual coordinates therefore does not imply
+that their differences or other sensitive linear combinations are hidden.
+
+\begin{proposition}[Additional retained linear information]
+For a linear state $Ex$ supporting every row of $A$, its extra independent
+linear information is $\rank([A;E])-\rank(A)=\rank(E)-\rank(A)$.
+The answer vector itself and a transfer-forest basis both have zero extra
+dimensions and the same kernel. Counter count can differ even when their
+independent information dimensions coincide.
+\end{proposition}
+\begin{proof}
+Support gives $\row(A)\subseteq\row(E)$. The rank difference is the dimension
+of the quotient of their row spaces. For the forest, the lemma gives equality
+of row spaces; equality of kernels follows. Thus each answer-equivalent state
+is a deterministic linear function of the other. No inference advantage over
+all-answer materialization follows from using the forest.
+\end{proof}
+
+\paragraph{M0 reconstruction.}
+The checked M0 contract has no mandatory positions and one component containing
+20 reachable positions. Its rank is therefore 20, the full reachable dimension.
+Tree-edge differences recover potentials $p_v=x_v-x_{v_0}$ from pairs of legal
+query answers. One base answer fixes the root as
+$x_{v_0}=(a_{q_0}x-\sum_{v:q_0\text{ selects }v}p_v)/K$.
+At most $1+2(20-1)=39$ distinct queries are needed before deduplication.
+The actual construction uses 28. Independently, 20 linearly independent legal
+rows form an invertible matrix on reachable positions and give a 20-query
+decoder. Twenty scalar linear answers per metric are necessary for universal
+linear recovery of 20 independent reachable coordinates. Both decoders use
+permitted answers alone; the separately captured source validates their outputs.
+Recovered quantities are cumulative group/rank metrics, not individual records.
+
+\begin{proposition}[Binary full-range kernel]
+For $G=2$, $q=(i,K-i)$, $0\leq i\leq K$, pair the coordinates
+$(0,r)$ and $(1,K+1-r)$. The answer rank is $K+1$, and the kernel consists
+exactly of vectors assigning a common offset $z_r$ to both coordinates of pair
+$r$, with $\sum_{r=1}^Kz_r=0$. A basis is $d_r=p_r-p_K$, $r<K$, where
+$p_r=e_{0,r}+e_{1,K+1-r}$.
+\end{proposition}
+\begin{proof}
+Consecutive quota rows differ by $e_{0,r}-e_{1,K+1-r}$. Their orthogonality
+conditions force equal offsets inside each pair. The base quota selects one
+coordinate of every pair, so its condition is $\sum_rz_r=0$. These $K-1$
+independent degrees of freedom give rank $2K-(K-1)=K+1$.
+\end{proof}
+
+\paragraph{Fixed-catalogue feasible-domain certificate.}
+The source domain holds the 62,423-movie catalogue fixed and uses MovieLens
+half-star ratings, its parsed release-year groups and metrics, score-descending
+and movie-ID-ascending ranks, and one sealed cumulative release horizon.
+Around the observed 25M-rating history, the deterministic search finds, for each
+$r=1,\ldots,9$, four movie substitutions whose cumulative year-metric change
+is $d_r$. It uses 36 distinct users across all directions. Every replacement
+is a catalogue member absent from that user's history; its release year changes
+by the required $\pm1$, stays in the same binary group, and is no later than
+the rating's timestamp year. The rating, timestamp, number of ratings and
+ranking position are preserved. Each original and modified user history is
+independently sorted and directly queried to verify its exact contribution.
+No catalogue attribute is changed, and modified preferences are explicitly
+counterfactual rather than claimed observed behavior.
+
+Because no edited user is shared by two directions, any subset combines
+independently validated user histories without interactions. The $2^9=512$
+subsets are valid source histories with the same 22 policy/metric answers.
+Their year-atom differences have affine dimension nine, exhausting the
+year-metric kernel. Every one of the 20 individual year-rank coordinates varies
+across these histories at the same observed answer vector. A second SQL
+implementation re-parses and re-sorts all 25,000,095 records after all 36 edits
+and verifies the resulting aggregates and all permitted answers.
+
+\begin{corollary}[Exact source-domain identifiability at the observed answers]
+At this observed joint answer vector, a linear statistic of the 20 year atoms
+is uniquely determined over the declared fixed-catalogue source domain iff
+its coefficient vector lies in $\row(A)$.
+\end{corollary}
+\begin{proof}
+Membership gives a decoder on every feasible history. For nonmembership,
+the coefficient vector is not orthogonal to $\ker(A)$. Since the nine certified
+feasible differences span that kernel, it has nonzero inner product with some
+$d_r$. The observed history and that valid switched history have the same
+answers for both metrics and different target values. Thus even a nonlinear
+decoder cannot uniquely determine this linear target at these answers.
+\end{proof}
+
+This is constructive nonuniqueness for a specified domain and release, not a
+probabilistic privacy guarantee, a frequency estimate, or a guarantee under
+arbitrary auxiliary knowledge. Intermediate user-prefix answer releases can
+distinguish these histories; the experiment explicitly checks this limitation.
+Rating-metric values are unchanged, so the source certificate does not claim
+18 feasible independent directions across both metrics.
+
+\paragraph{Implicit interval compiler.}
+Effective minima and maxima are
+$m_g=\max(\ell_g,K-\sum_{h\ne g}u_h)$ and
+$M_g=\min(u_g,K-\sum_{h\ne g}\ell_h)$.
+For a group pair $g<h$ and receiver rank $r$, feasible donor ranks form one
+interval obtained by intersecting $[m_h+1,M_h]$ with
+$[K-r+1-\sum_{j\ne g,h}u_j,\ K-r+1-\sum_{j\ne g,h}\ell_j]$.
+Every integer residual in this interval is attainable by filling the remaining
+bounded coordinates greedily.
+
+The implementation adds the receiver's edge to the first donor in an interval.
+It also adds an edge to each donor immediately after a donor-adjacency cut that
+has not yet been processed for this group pair. A successor structure skips
+processed cuts. A processed cut certifies that its consecutive donors are
+already connected by a previously examined star. Inductively each examined
+star's entire donor interval becomes connected to its receiver, while every
+edge actually added is a feasible original transfer edge. The connected
+components are therefore identical to a dense edge scan. Union-find discards
+cycles, producing a valid transfer forest.
+
+There are $O(G^2K)$ interval/cut operations, $O(GK)$ stored vertices/forest
+edges, and $O(K)$ temporary successor entries per group pair. These are operation
+counts, with union-find overhead and integer bit costs kept explicit. Exact
+bounded-composition counting uses $O(GK)$ arithmetic operations. Exhaustive
+small-box checks compare components' resulting row spaces, forest witnesses,
+ranks and target decisions with independent rational elimination. Timing
+comparators include a dense structural scan, explicit matrices where within
+declared caps, and direct analytic formulas on their applicable families; the
+generic compiler is not claimed faster than those specialized formulas.
+\end{document}
